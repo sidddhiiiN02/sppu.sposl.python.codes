@@ -19,8 +19,8 @@ def producer():
             buffer.put(i)
             print(f"Produced: {i} (Buffer size: {buffer.qsize()})")
             
-            with cv_consumer:
-                cv_consumer.notify()
+            # FIX: Removed the nested 'with' statement which caused a deadlock
+            cv_consumer.notify()
         
         time.sleep(0.25)
 
@@ -33,8 +33,8 @@ def consumer():
             val = buffer.get()
             print(f"Consumed: {val} (Buffer size: {buffer.qsize()})")
             
-            with cv_producer:
-                cv_producer.notify()
+            # FIX: Removed the nested 'with' statement which caused a deadlock
+            cv_producer.notify()
         
         time.sleep(0.5)
 
