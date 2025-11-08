@@ -1,0 +1,28 @@
+11. Write a program to simulate Memory placement strategy – best fit,
+Sample Input
+memory partitions of 100K, 500K, 200K, 300K and 600K (in order)
+Place processes of size 212K, 417K, 112K, 426K (in order)
+
+partitions = [100, 500, 200, 300, 600]
+processes = [212, 417, 112, 426]
+
+print("--- Best Fit Memory Allocation ---")
+
+for proc_size in processes:
+    best_fit_index = -1
+    min_fragment = float('inf')
+    
+    for i in range(len(partitions)):
+        if partitions[i] >= proc_size:
+            fragment = partitions[i] - proc_size
+            if fragment < min_fragment:
+                min_fragment = fragment
+                best_fit_index = i
+                
+    if best_fit_index != -1:
+        print(f"Process {proc_size}K allocated to partition {partitions[best_fit_index]}K.")
+        partitions[best_fit_index] -= proc_size
+    else:
+        print(f"Process {proc_size}K cannot be allocated.")
+
+print(f"Final Partitions: {partitions}")
