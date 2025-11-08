@@ -1,0 +1,53 @@
+//Write a program to solve Classical Problems of Synchronization using
+Semaphore.
+
+import threading
+import queue
+import time
+
+BUFFER_SIZE = 5
+buffer = queue.Queue(maxsize=BUFFER_SIZE)
+
+mutex_sem = threading.Semaphore(1)
+empty_sem = threading.Semaphore(BUFFER_SIZE)
+full_sem = threading.Semaphore(0)
+
+def producer():
+    for i in range(10):
+        empty_sem.acquire()
+        
+        mutex_sem.acquire()
+        
+        buffer.put(i)
+        print(f"Produced: {i} (Buffer size: {buffer.qsize()})")
+        
+        mutex_sem.release()
+        
+        full_sem.release()
+        
+        time.sleep(0.25)
+
+def consumer():
+    for i in range(10):
+        full_sem.acquire()
+        
+        mutex_sem.acquire()
+        
+        val = buffer.get()
+        print(f"Consumed: {val} (Buffer size: {buffer.qsize()})")
+        
+        mutex_sem.release()
+        
+        empty_sem.release()
+        
+        time.sleep(0.5)
+
+print("--- Producer-Consumer with 3 Semaphores ---")
+t1 = threading.Thread(target=producer)
+t2 = threading.Thread(target=consumer)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
