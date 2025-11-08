@@ -1,0 +1,77 @@
+Write a program to simulate CPU Scheduling Algorithm: SJF
+(Preemptive)
+Sample Input:
+Process Arrival time Burst Time
+P1 0 6
+P2 1 4
+P3 4 8
+P4 3 3
+
+
+processes = [
+    {'pid': 1, 'at': 0, 'bt': 6, 'rt': 6},
+    {'pid': 2, 'at': 1, 'bt': 4, 'rt': 4},
+    {'pid': 3, 'at': 4, 'bt': 8, 'rt': 8},
+    {'pid': 4, 'at': 3, 'bt': 3, 'rt': 3}
+]
+n = len(processes)
+
+completed = 0
+current_time = 0
+total_tat = 0
+total_wt = 0
+gantt_chart = []
+last_pid = -1
+
+print("--- SJF (Preemptive) / SRTF Scheduling ---")
+
+while completed != n:
+    shortest_index = -1
+    shortest_rt = float('inf')
+
+    for i in range(n):
+        p = processes[i]
+        if p['at'] <= current_time and p['rt'] < shortest_rt and p['rt'] > 0:
+            shortest_rt = p['rt']
+            shortest_index = i
+            
+    if shortest_index == -1:
+        if last_pid != -1:
+             gantt_chart.append(f"| {current_time} ")
+        gantt_chart.append(f"| [IDLE] ")
+        current_time += 1
+        last_pid = -1
+        continue
+
+    p = processes[shortest_index]
+    
+    if p['pid'] != last_pid:
+        if last_pid != -1:
+            gantt_chart.append(f"| {current_time} ")
+        gantt_chart.append(f"| P{p['pid']} ")
+        last_pid = p['pid']
+    
+    p['rt'] -= 1
+    current_time += 1
+
+    if p['rt'] == 0:
+        completed += 1
+        p['ct'] = current_time
+        p['tat'] = p['ct'] - p['at']
+        p['wt'] = p['tat'] - p['bt']
+        
+        total_tat += p['tat']
+        total_wt += p['wt']
+        
+gantt_chart.append(f"| {current_time} ")
+print("Gantt Chart (simplified):")
+print("".join(gantt_chart) + "|")
+print("\n")
+
+print(f"{'PID':<5} {'AT':<5} {'BT':<5} {'CT':<5} {'TAT':<5} {'WT':<5}")
+print("-------------------------------")
+for p in processes:
+    print(f"{p['pid']:<5} {p['at']:<5} {p['bt']:<5} {p['ct']:<5} {p['tat']:<5} {p['wt']:<5}")
+
+print(f"\nAverage Turnaround Time: {total_tat / n}")
+print(f"Average Waiting Time: {total_wt / n}")
