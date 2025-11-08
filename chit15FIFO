@@ -1,0 +1,36 @@
+Write a program to simulate Page replacement algorithm. FIFO
+Sample Input:
+2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2 and no. of frames is 3
+
+ from collections import deque
+
+page_string = [2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2]
+num_frames = 3
+
+frames = deque(maxlen=num_frames)
+frame_set = set()
+page_faults = 0
+
+print("--- FIFO Page Replacement ---")
+print(f"Frames: {num_frames}\n")
+
+for page in page_string:
+    print(f"Page {page}: ", end="")
+    
+    if page in frame_set:
+        print("HIT.")
+        continue
+    
+    page_faults += 1
+    print("FAULT. ", end="")
+    
+    if len(frames) == num_frames:
+        victim = frames.popleft()
+        frame_set.remove(victim)
+        print(f"Evicted {victim}. ", end="")
+        
+    frames.append(page)
+    frame_set.add(page)
+    print(f"Loaded {page}.")
+
+print(f"\nTotal Page Faults: {page_faults}") 
