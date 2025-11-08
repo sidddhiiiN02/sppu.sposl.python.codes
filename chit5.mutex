@@ -1,0 +1,49 @@
+//Write a program to solve Classical Problems of Synchronization using
+Mutex.
+
+import threading
+import queue
+import time
+
+buffer = queue.Queue(maxsize=5)
+lock = threading.Lock()
+cv_producer = threading.Condition(lock)
+cv_consumer = threading.Condition(lock)
+
+def producer():
+    for i in range(10):
+        with cv_producer:
+            while buffer.full():
+                cv_producer.wait()
+            
+            buffer.put(i)
+            print(f"Produced: {i} (Buffer size: {buffer.qsize()})")
+            
+            with cv_consumer:
+                cv_consumer.notify()
+        
+        time.sleep(0.25)
+
+def consumer():
+    for i in range(10):
+        with cv_consumer:
+            while buffer.empty():
+                cv_consumer.wait()
+            
+            val = buffer.get()
+            print(f"Consumed: {val} (Buffer size: {buffer.qsize()})")
+            
+            with cv_producer:
+                cv_producer.notify()
+        
+        time.sleep(0.5)
+
+print("--- Producer-Consumer with Mutex & CV ---")
+t1 = threading.Thread(target=producer)
+t2 = threading.Thread(target=consumer)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
