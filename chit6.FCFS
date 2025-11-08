@@ -1,0 +1,54 @@
+Write a program to simulate CPU Scheduling Algorithm: FCFS
+Sample Input:
+Process ID Arrival Time Service Time
+P1 0 3
+P2 2 6
+P3 4 4
+P4 6 5
+P5 8 2
+
+ processes = [
+    {'pid': 1, 'at': 0, 'bt': 3},
+    {'pid': 2, 'at': 2, 'bt': 6},
+    {'pid': 3, 'at': 4, 'bt': 4},
+    {'pid': 4, 'at': 6, 'bt': 5},
+    {'pid': 5, 'at': 8, 'bt': 2}
+]
+n = len(processes)
+
+processes.sort(key=lambda x: x['at'])
+
+current_time = 0
+total_tat = 0
+total_wt = 0
+
+gantt_chart = []
+
+for p in processes:
+    if current_time < p['at']:
+        gantt_chart.append(f"| {current_time} [IDLE] {p['at']} ")
+        current_time = p['at']
+    
+    p['ct'] = current_time + p['bt']
+    p['tat'] = p['ct'] - p['at']
+    p['wt'] = p['tat'] - p['bt']
+    
+    current_time = p['ct']
+    
+    total_tat += p['tat']
+    total_wt += p['wt']
+    
+    gantt_chart.append(f"| P{p['pid']} {current_time} ")
+
+print("--- FCFS Scheduling ---")
+print("Gantt Chart (simplified):")
+print("".join(gantt_chart) + "|")
+print("\n")
+
+print(f"{'PID':<5} {'AT':<5} {'BT':<5} {'CT':<5} {'TAT':<5} {'WT':<5}")
+print("-------------------------------")
+for p in processes:
+    print(f"{p['pid']:<5} {p['at']:<5} {p['bt']:<5} {p['ct']:<5} {p['tat']:<5} {p['wt']:<5}")
+
+print(f"\nAverage Turnaround Time: {total_tat / n}")
+print(f"Average Waiting Time: {total_wt / n}") 
