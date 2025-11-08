@@ -1,0 +1,40 @@
+//Write a program to simulate Page replacement algorithm. LRU
+Sample Input:
+2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2 and no. of frames is 3
+
+page_string = [2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2]
+num_frames = 3
+
+frames = {}
+page_faults = 0
+
+print("--- LRU Page Replacement ---")
+print(f"Frames: {num_frames}\n")
+
+for current_time, page in enumerate(page_string):
+    print(f"Page {page}: ", end="")
+    
+    if page in frames:
+        print("HIT. ")
+        frames[page] = current_time
+    else:
+        page_faults += 1
+        print("FAULT. ", end="")
+        
+        if len(frames) < num_frames:
+            frames[page] = current_time
+            print(f"Loaded {page}.")
+        else:
+            lru_page = -1
+            oldest_time = float('inf')
+            
+            for frame_page, last_used in frames.items():
+                if last_used < oldest_time:
+                    oldest_time = last_used
+                    lru_page = frame_page
+            
+            del frames[lru_page]
+            frames[page] = current_time
+            print(f"Evicted {lru_page}. Loaded {page}.")
+
+print(f"\nTotal Page Faults: {page_faults}")  
