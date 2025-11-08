@@ -1,0 +1,23 @@
+//Write a program to simulate Memory placement strategy – first fit.
+Sample Input
+memory partitions of 100K, 500K, 200K, 300K and 600K (in order)
+Place processes of size 212K, 417K, 112K, 426K (in order)
+
+partitions = [100, 500, 200, 300, 600]
+processes = [212, 417, 112, 426]
+
+print("--- First Fit Memory Allocation ---")
+
+for proc_size in processes:
+    allocated = False
+    for i in range(len(partitions)):
+        if partitions[i] >= proc_size:
+            print(f"Process {proc_size}K allocated to partition {partitions[i]}K.")
+            partitions[i] -= proc_size
+            allocated = True
+            break
+            
+    if not allocated:
+        print(f"Process {proc_size}K cannot be allocated.")
+
+print(f"Final Partitions: {partitions}")
